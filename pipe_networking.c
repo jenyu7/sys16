@@ -25,5 +25,14 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-  return 0;
+  int val = mkfifo("client_pipe", 0644);
+  if (val == -1){printf("Error: %s\n", strerror(errno));exit(0);}
+  *to_server = open("client_pipe", O_RDWR);
+  close(*to_server);
+  return *to_server;
+}
+
+int main(){
+  int * in;
+  printf("%d\n", client_handshake(in));
 }
