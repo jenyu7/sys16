@@ -37,7 +37,7 @@ int server_handshake(int *to_client) {
   read(*from_client, clients_message, 256);
   if ( strcmp(clients_message,"got it, here's my response") != 0 ) {
     // unexpected message
-    printf("Server: unexpected message from client for third handshake");
+    printf("SERVER: unexpected message from client for third handshake");
     exit(1);
   }
   
