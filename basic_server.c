@@ -9,6 +9,7 @@ int main() {
 
   from_client = server_handshake( &to_client );
 
+  memset(buf, 0, BUFFER_SIZE);
   while(1){
     read(from_client, buf, sizeof(buf));
     printf("Received from client: %s\n", buf);

@@ -10,8 +10,8 @@ int main() {
 
   while(1){
     printf("Send message to the server: \n");
-    int val = fgets(buf, sizeof(buf), stdin);
-    if (val == 0){printf("No text entered.\n");exit(0);}
+    fgets(buf, sizeof(buf), stdin);
+    if (buf[0] == '\n'){printf("No text entered.\n");exit(0);}
     write(to_server, buf, sizeof(buf));
     read(from_server, buf, sizeof(buf));
     printf("Received from server: %s\n", buf);

@@ -27,8 +27,9 @@ int server_handshake(int *to_client) {
     exit(1);
   }
 
-  printf("Connecting to pipe %s...\n", buf);
+  memset(buf, 0, sizeof(buf));
   read(from_client, buf, sizeof(buf)); // client's secret pipe name
+  printf("Connecting to pipe %s...\n", buf);
 
   *to_client = open(buf, O_WRONLY);
   if (*to_client == -1 ) {
