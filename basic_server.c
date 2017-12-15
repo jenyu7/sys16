@@ -13,6 +13,10 @@ int main() {
   while(1){
     read(from_client, buf, sizeof(buf));
     printf("Received from client: %s\n", buf);
+    int i;
+    for ( i=0 ; buf[i] ; i++ ) {
+      buf[i] = toupper(buf[i]);
+    }
     write(to_client, buf, sizeof(buf));
   }
   return 0;

@@ -14,16 +14,16 @@ int server_handshake(int *to_client) {
   char buf[HANDSHAKE_BUFFER_SIZE];
   if ( mkfifo("wellknown_pipe", 0644) == -1 ) {
     // if mkfifo gives -1, an error happened
-    printf("SERVER: %d %s", errno, strerror(errno));
+    printf("Error %d: %s\n", errno, strerror(errno));
     exit(1);
   }
   printf("Server pipe created.\n");
-  
+
   int from_client = open("wellknown_pipe", O_RDONLY);
   printf("Connecting to client...\n");
   if ( from_client == -1 ) {
     // if open gives -1, an error happened
-    printf("SERVER: %d %s", errno, strerror(errno));
+    printf("Error %d: %s\n", errno, strerror(errno));
     exit(1);
   }
 
@@ -32,27 +32,27 @@ int server_handshake(int *to_client) {
   printf("Connecting to pipe %s...\n", buf);
 
   *to_client = open(buf, O_WRONLY);
-  if (*to_client == -1 ) {
+  if ( *to_client == -1 ) {
     // if open gives -1, an error happened
-    printf("SERVER: %d %s", errno, strerror(errno));
+    printf("Error %d: %s\n", errno, strerror(errno));
     exit(1);
   }
-  
+
   strcpy(buf, "hello");
   write(*to_client, buf, sizeof(buf));
   //memset(clients_message, 0, 256); // set everything in clients_message to 0
-  
+
   read(from_client, buf, sizeof(buf));
-  
+
   if ( strcmp(buf,"Received.") != 0 ) {
     // unexpected message
-    printf("SERVER: unexpected message from client for third handshake");
+    printf("unexpected message from client for third handshake");
     exit(1);
   }
 
   printf("Connection established.\n");
   remove("wellknown_pipe");
-  
+
   return from_client;
 }
 
@@ -72,14 +72,24 @@ int client_handshake(int *to_server) {
   sprintf(pname,"%d",getpid());
   int val = mkfifo(pname, 0644);
   strcpy(buf,pname);
-  if (val == -1){printf("Error: %s\n", strerror(errno));exit(0);}
+  if (val == -1){printf("Error %d: %s\n", errno, strerror(errno));exit(1);}
   printf("Pipe created: %s\n", pname);
-  
+
   *to_server = open("wellknown_pipe", O_WRONLY);
+  if ( *to_server == -1 ) {
+    // if open gives -1, an error happened
+    printf("Error %d: %s\n", errno, strerror(errno));
+    exit(1);
+  }
   write(*to_server, buf, sizeof(buf));
   printf("Connection made to server.\n");
 
   int from_server = open(pname, O_RDONLY);
+  if ( from_server == -1 ) {
+    // if open gives -1, an error happened
+    printf("Error %d: %s\n", errno, strerror(errno));
+    exit(1);
+  }
   read(from_server, buf, sizeof(buf));
   printf("Received from server: %s\n", buf);
 
@@ -94,7 +104,7 @@ int client_handshake(int *to_server) {
 
   strcpy(buf, "Received.");
   write(*to_server, buf, sizeof(buf));
-  
+
   return from_server;
 }
 
