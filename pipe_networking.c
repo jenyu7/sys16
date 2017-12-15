@@ -38,13 +38,13 @@ int server_handshake(int *to_client) {
     exit(1);
   }
 
-  strcpy(buf, "hello");
+  strcpy(buf, ACK);
   write(*to_client, buf, sizeof(buf));
   //memset(clients_message, 0, 256); // set everything in clients_message to 0
 
   read(from_client, buf, sizeof(buf));
 
-  if ( strcmp(buf,"Received.") != 0 ) {
+  if ( strcmp(buf, ACK) != 0 ) {
     // unexpected message
     printf("unexpected message from client for third handshake");
     exit(1);
@@ -70,8 +70,8 @@ int client_handshake(int *to_server) {
   char buf[HANDSHAKE_BUFFER_SIZE];
   char pname[128];
   sprintf(pname,"%d",getpid());
-  int val = mkfifo(pname, 0644);
   strcpy(buf,pname);
+  int val = mkfifo(pname, 0644);
   if (val == -1){printf("Error %d: %s\n", errno, strerror(errno));exit(1);}
   printf("Pipe created: %s\n", pname);
 
@@ -93,7 +93,7 @@ int client_handshake(int *to_server) {
   read(from_server, buf, sizeof(buf));
   printf("Received from server: %s\n", buf);
 
-  if(strcmp(buf,"hello")==0){
+  if(strcmp(buf, ACK)==0){
     printf("Successfully connected.\n");
   }
   else{
@@ -102,7 +102,7 @@ int client_handshake(int *to_server) {
   }
   remove(pname);
 
-  strcpy(buf, "Received.");
+  strcpy(buf, ACK);
   write(*to_server, buf, sizeof(buf));
 
   return from_server;

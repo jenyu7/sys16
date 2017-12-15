@@ -11,8 +11,8 @@ int main() {
   while(1){
     printf("Send message to the server: \n");
     fgets(buf, sizeof(buf), stdin);
-    if (buf[0] == '\n'){printf("No text entered.\n");exit(0);}
     write(to_server, buf, sizeof(buf));
+    if (buf[0] == '\n'){printf("No text entered.\n");exit(0);}
     read(from_server, buf, sizeof(buf));
     printf("Received from server: %s\n", buf);
   }
