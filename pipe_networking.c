@@ -1,6 +1,14 @@
 #include "pipe_networking.h"
 
 
+static void sighandler(int signo)
+{
+  if (signo == SIGINT){
+    remove("wellknown_pipe");
+    exit(0);
+  }
+}
+
 /*=========================
   server_handshake
   args: int * to_client
